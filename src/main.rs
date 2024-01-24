@@ -149,6 +149,10 @@ async fn device_alive(req: HttpRequest, stream: web::Payload, srv: web::Data<Add
     HttpResponse::Ok()
 }
 
+async fn device_test() -> impl Responder {
+    HttpResponse::Ok().body("Ok")
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let server = wsserver::DyscyplinerServer::new().start();
@@ -157,10 +161,10 @@ async fn main() -> std::io::Result<()> {
                 App::new()
                 .app_data(web::Data::new(server.clone()))
                 .route("/ws/{login}/{password}", web::get().to(index))
-                .route("/device/alive/{key}/{status}", web::get().to(device_alive)
-            )
+                .route("/device/alive/{key}/{status}", web::get().to(device_alive))
+                .route("/device/test", web::get().to(device_test))
         )
-        .bind(("127.0.0.1", 8080))?
+        .bind(("192.168.0.100", 8085))?
         .run()
         .await
 }
